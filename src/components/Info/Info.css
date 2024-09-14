@@ -1,0 +1,54 @@
+/* Container for each info field */
+.info-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center align the input fields */
+    margin-bottom: 20px;
+    width: 100%;
+    /* Ensures the title box spans the full width */
+}
+
+/* Title box styling */
+.info-title {
+    background-color: #f0f0f0;
+    /* Light background for title box */
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+    /* Rounded top corners */
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    /* Match the border of input */
+    border-bottom: none;
+    /* Remove border between title and input */
+    width: 100%;
+    /* Title spans the full width */
+}
+
+/* Form box input fields */
+.info-box input,
+.info-box select {
+    width: 60%;
+    /* Shorter width for input fields */
+    padding: 8px;
+    /* Reduced padding for smaller input fields */
+    border-radius: 0 0 5px 5px;
+    /* Rounded bottom corners */
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    text-align: center;
+    /* Center align text inside the input */
+}
+
+/* Input fields focus effect */
+.info-box input:focus,
+.info-box select:focus {
+    border-color: #007bff;
+    outline: none;
+    text-align: center;
+    /* Center align the text when focused */
+}
