@@ -142,7 +142,7 @@ const Home = () => {
                         {/* Preferred Duration with Unit */}
                         <div className="duration-container">
                             <div className="duration-input">
-                                <label classname='label'>Preferred Duration</label>
+                                <label>Preferred Duration</label>
                                 <input
                                     type="number"
                                     value={formData['Preferred Duration']}

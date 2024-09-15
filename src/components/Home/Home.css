@@ -83,40 +83,40 @@ h2 {
     gap: 10px;
     width: 70%;
 }
-.label {
-    align-items: center;
-}
 .duration-container {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Ensure space between the fields */
-    gap: 50px; /* Adds space between the two fields */
-    margin-bottom: 10px; /* Space between rows */
+    justify-content: center;
+    /* Center the fields horizontally */
+    gap: 30px;
+    /* Adjust the gap between the fields */
+    margin-bottom: 20px;
+    /* Space between rows */
 }
 
-.duration-input, .duration-unit {
-    flex: 1; /* Both fields take equal width */
+.duration-input,
+.duration-unit {
+    flex: 1;
+    /* Both fields take equal width */
+    max-width: 250px;
+    /* Set a max-width for each field to avoid overly wide inputs */
+    text-align: center;
 }
 
 .duration-unit {
-    min-width: 90px; /* Set a minimum width for the dropdown */
+    min-width: 130px;
+    /* Set a minimum width for the dropdown */
 }
 
 .form-field {
-    width: 60%; /* Ensures input and select take full width */
-}
-
-
-/* Styling individual form fields */
-.form-field {
-    flex: 1;
+    width: 100%;
+    /* Ensures input and select take full width of their containers */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin: 0 10px;
-    width: 100%;
-    /* Ensure full width within the parent */
     font-size: 16px;
+    text-align: center;
+    /* Center text inside input fields */
 }
 
 /* Submit Button */
