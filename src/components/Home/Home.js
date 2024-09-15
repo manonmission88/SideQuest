@@ -90,8 +90,6 @@ const Home = () => {
 
         setResponseMessage(`Your duration is ${durationInMinutes} minutes. This is where the AI suggested locations or activities will appear based on your input.`);
         alert('Form submitted successfully.');
-
-        console.log(updatedFormData); // Check your console for the updated form data
     };
 
     return (
