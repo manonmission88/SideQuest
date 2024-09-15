@@ -83,6 +83,29 @@ h2 {
     gap: 10px;
     width: 70%;
 }
+.label {
+    align-items: center;
+}
+.duration-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Ensure space between the fields */
+    gap: 50px; /* Adds space between the two fields */
+    margin-bottom: 10px; /* Space between rows */
+}
+
+.duration-input, .duration-unit {
+    flex: 1; /* Both fields take equal width */
+}
+
+.duration-unit {
+    min-width: 90px; /* Set a minimum width for the dropdown */
+}
+
+.form-field {
+    width: 60%; /* Ensures input and select take full width */
+}
+
 
 /* Styling individual form fields */
 .form-field {

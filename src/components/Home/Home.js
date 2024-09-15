@@ -10,6 +10,7 @@ const Home = () => {
         'Who are you traveling with?': 'Solo',
         'What are your vibes today?': '',
         'Preferred Duration': '',
+        DurationUnit: 'Minutes',  // Default unit
         Budget: ''
     });
 
@@ -53,20 +54,44 @@ const Home = () => {
         }));
     };
 
+    const convertToMinutes = (duration, unit) => {
+        switch (unit) {
+            case 'Hours':
+                return duration * 60; // 1 hour = 60 minutes
+            case 'Days':
+                return duration * 24 * 60; // 1 day = 1440 minutes
+            case 'Weeks':
+                return duration * 7 * 24 * 60; // 1 week = 10080 minutes
+            case 'Months':
+                return duration * 30 * 24 * 60; // 1 month = 43200 minutes (assuming average of 30 days)
+            default:
+                return duration; // Already in minutes
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Ensure all required fields are filled
-        const { From, Destination, 'Who are you traveling with?': who, 'What are your vibes today?': vibes, 'Preferred Duration': duration, Budget } = formData;
+        const { From, Destination, 'Who are you traveling with?': who, 'What are your vibes today?': vibes, 'Preferred Duration': duration, DurationUnit, Budget } = formData;
 
         if (!From || !Destination || !who || !vibes || !duration || !Budget) {
             alert('Please fill in all the fields.');
             return;
         }
 
-        // Placeholder response message after form submission
-        setResponseMessage('This is where the AI suggested locations or activities will appear based on your input.');
+        // Convert the duration to minutes
+        const durationInMinutes = convertToMinutes(Number(duration), DurationUnit);
+
+        // Update formData to store the converted duration in minutes
+        const updatedFormData = {
+            ...formData,
+            'Preferred Duration': durationInMinutes
+        };
+
+        setResponseMessage(`Your duration is ${durationInMinutes} minutes. This is where the AI suggested locations or activities will appear based on your input.`);
         alert('Form submitted successfully.');
+
+        console.log(updatedFormData); // Check your console for the updated form data
     };
 
     return (
@@ -114,14 +139,35 @@ const Home = () => {
                             onChange={(value) => handleChange('What are your vibes today?', value)}
                             required={true}  // Making this field required
                         />
-                        <Info
-                            className="info info-number"
-                            title="Preferred Duration"
-                            type="number"
-                            value={formData['Preferred Duration']}
-                            onChange={(value) => handleChange('Preferred Duration', value)}
-                            required={true}  // Making this field required
-                        />
+                        {/* Preferred Duration with Unit */}
+                        <div className="duration-container">
+                            <div className="duration-input">
+                                <label classname='label'>Preferred Duration</label>
+                                <input
+                                    type="number"
+                                    value={formData['Preferred Duration']}
+                                    onChange={(e) => handleChange('Preferred Duration', e.target.value)}
+                                    placeholder="Enter duration"
+                                    className="form-field"
+                                    required
+                                />
+                            </div>
+                            <div className="duration-unit">
+                                <label>Unit</label>
+                                <select
+                                    value={formData.DurationUnit}
+                                    onChange={(e) => handleChange('DurationUnit', e.target.value)}
+                                    className="form-field"
+                                    required
+                                >
+                                    <option value="Minutes">Minutes</option>
+                                    <option value="Hours">Hours</option>
+                                    <option value="Days">Days</option>
+                                    <option value="Weeks">Weeks</option>
+                                    <option value="Months">Months</option>
+                                </select>
+                            </div>
+                        </div>
                         <Info
                             className="info info-budget"
                             title="Budget"
