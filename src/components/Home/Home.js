@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Info from '../Info/Info';
+import axios from 'axios';
 import './Home.css';
 import MapLogo from './assests/map.png';
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+
+
 
 const Home = () => {
     const [formData, setFormData] = useState({
@@ -10,14 +15,14 @@ const Home = () => {
         'Who are you traveling with?': 'Solo',
         'What are your vibes today?': '',
         'Preferred Duration': '',
-        DurationUnit: 'Minutes',  // Default unit
-        Budget: ''
+        DurationUnit: 'Minutes', // Default unit
+        Budget: '',
     });
 
     const fromRef = useRef(null);
     const destinationRef = useRef(null);
 
-    // Initialize Google Maps Autocomplete once the component mounts and API is loaded
+    // Initialize Google Maps Autocomplete once the component mounts
     useEffect(() => {
         const initAutocomplete = () => {
             const fromAutocomplete = new window.google.maps.places.Autocomplete(fromRef.current);
@@ -41,11 +46,13 @@ const Home = () => {
         if (window.google && window.google.maps) {
             initAutocomplete();
         } else {
-            window.initAutocomplete = initAutocomplete; // Assign initAutocomplete to window to be called after API loads
+            window.initAutocomplete = initAutocomplete;
         }
     }, []);
 
-    const [responseMessage, setResponseMessage] = useState(''); // Placeholder for response
+    const [responseMessage, setResponseMessage] = useState('');
+    const [loading, setLoading] = useState(false); // Add loading state
+    const [locations, setLocations] = useState([]); // Initialize as an empty array
 
     const handleChange = (field, value) => {
         setFormData(prevData => ({
@@ -54,6 +61,7 @@ const Home = () => {
         }));
     };
 
+    // Convert duration based on unit (minutes, hours, days, etc.)
     const convertToMinutes = (duration, unit) => {
         switch (unit) {
             case 'Hours':
@@ -63,13 +71,13 @@ const Home = () => {
             case 'Weeks':
                 return duration * 7 * 24 * 60; // 1 week = 10080 minutes
             case 'Months':
-                return duration * 30 * 24 * 60; // 1 month = 43200 minutes (assuming average of 30 days)
+                return duration * 30 * 24 * 60; // 1 month = 43200 minutes (assuming 30 days)
             default:
                 return duration; // Already in minutes
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const { From, Destination, 'Who are you traveling with?': who, 'What are your vibes today?': vibes, 'Preferred Duration': duration, DurationUnit, Budget } = formData;
@@ -82,14 +90,33 @@ const Home = () => {
         // Convert the duration to minutes
         const durationInMinutes = convertToMinutes(Number(duration), DurationUnit);
 
-        // Update formData to store the converted duration in minutes
-        const updatedFormData = {
-            ...formData,
-            'Preferred Duration': durationInMinutes
-        };
+        // TODO : replace the api url 
+        const apiUrl = 'http://localhost:8000/search_getaways'; // Replace with your backend URL
+        const params = new URLSearchParams({
+            from_destination: From,
+            to_destination: Destination,
+            vibes: vibes,
+            duration: durationInMinutes,
+            budget: Budget,
+            travel_companion: who,
+        }).toString();
 
-        setResponseMessage(`Your duration is ${durationInMinutes} minutes. This is where the AI suggested locations or activities will appear based on your input.`);
-        alert('Form submitted successfully.');
+        // Set loading to true before sending the request
+        setLoading(true);
+        setResponseMessage(''); // Clear the previous response
+
+        try {
+            // Send data to the backend
+            const response = await axios.get(`${apiUrl}?${params}`);
+            const fetchedLocations = response.data || []; // Default to empty array if undefined
+            setResponseMessage(JSON.stringify(response.data, null, 2));
+            setLocations(Array.isArray(fetchedLocations) ? fetchedLocations : []); // Ensure it's an array
+        } catch (error) {
+            console.error('Error submitting the form', error);
+            alert('There was an error submitting the form. Please try again later.');
+        } finally {
+            setLoading(false); // Set loading to false after receiving the response or error
+        }
     };
 
     return (
@@ -98,11 +125,9 @@ const Home = () => {
                 <h3>SideQuest</h3>
             </div>
             <div className="form-and-response">
-                {/* Travel Form */}
                 <div className="home-container">
                     <img src={MapLogo} alt="Map Logo" className="map-logo" />
                     <form onSubmit={handleSubmit}>
-                        {/* From and Destination in the same box */}
                         <div className="form-row">
                             <div className="double-field">
                                 <input
@@ -127,7 +152,7 @@ const Home = () => {
                             value={formData['Who are you traveling with?']}
                             onChange={(value) => handleChange('Who are you traveling with?', value)}
                             options={['Solo', 'Friends', 'Family', 'Spouse', 'Colleagues']}
-                            required={true}  // Making this field required
+                            required={true}
                         />
                         <Info
                             className="info info-text"
@@ -135,9 +160,8 @@ const Home = () => {
                             type="text"
                             value={formData['What are your vibes today?']}
                             onChange={(value) => handleChange('What are your vibes today?', value)}
-                            required={true}  // Making this field required
+                            required={true}
                         />
-                        {/* Preferred Duration with Unit */}
                         <div className="duration-container">
                             <div className="duration-input">
                                 <label>Preferred Duration</label>
@@ -172,17 +196,41 @@ const Home = () => {
                             type="text"
                             value={formData.Budget}
                             onChange={(value) => handleChange('Budget', value)}
-                            required={true}  // Making this field required
+                            required={true}
                         />
-
-                        <button className="submit-btn" type="submit">Submit</button>
+                        <button className="submit-btn" type="submit" disabled={loading}>
+                            {loading ? 'Loading...' : 'Submit'}
+                        </button>
                     </form>
                 </div>
 
-                {/* Response Box */}
                 <div className="response-box">
                     <h3>Suggested Locations</h3>
-                    <p>{responseMessage || 'Your suggestions will appear here after form submission.'}</p>
+                    {loading ? <p>Loading suggestions, please wait...</p> : (
+                        <>
+                            <pre>{responseMessage || 'Your suggestions will appear here after form submission.'}</pre>
+                            {locations.length > 0 && (
+                                <MapContainer center={[locations[0].latitude, locations[0].longitude]} zoom={12} style={{ height: '600px', width: '100%' }}>
+                                    <TileLayer
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    />
+                                    {locations.map((location, index) => (
+                                        <React.Fragment key={index}>
+                                            <Marker position={[location.latitude, location.longitude]}>
+                                                <Popup>{location.name}</Popup>
+                                            </Marker>
+                                            <Circle
+                                                center={[location.latitude, location.longitude]}
+                                                radius={500} // Radius in meters
+                                                pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 0.2 }}
+                                            />
+                                        </React.Fragment>
+                                    ))}
+                                </MapContainer>
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
         </div>
