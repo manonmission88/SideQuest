@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Info from '../Info/Info';
 import './Home.css';
 import MapLogo from './assests/map.png';
@@ -12,6 +12,37 @@ const Home = () => {
         'Preferred Duration': '',
         Budget: ''
     });
+
+    const fromRef = useRef(null);
+    const destinationRef = useRef(null);
+
+    // Initialize Google Maps Autocomplete once the component mounts and API is loaded
+    useEffect(() => {
+        const initAutocomplete = () => {
+            const fromAutocomplete = new window.google.maps.places.Autocomplete(fromRef.current);
+            const destinationAutocomplete = new window.google.maps.places.Autocomplete(destinationRef.current);
+
+            fromAutocomplete.addListener('place_changed', () => {
+                const place = fromAutocomplete.getPlace();
+                if (place && place.formatted_address) {
+                    handleChange('From', place.formatted_address);
+                }
+            });
+
+            destinationAutocomplete.addListener('place_changed', () => {
+                const place = destinationAutocomplete.getPlace();
+                if (place && place.formatted_address) {
+                    handleChange('Destination', place.formatted_address);
+                }
+            });
+        };
+
+        if (window.google && window.google.maps) {
+            initAutocomplete();
+        } else {
+            window.initAutocomplete = initAutocomplete; // Assign initAutocomplete to window to be called after API loads
+        }
+    }, []);
 
     const [responseMessage, setResponseMessage] = useState(''); // Placeholder for response
 
@@ -51,22 +82,18 @@ const Home = () => {
                         {/* From and Destination in the same box */}
                         <div className="form-row">
                             <div className="double-field">
-                                <Info
-                                    title="From"
-                                    type="text"
-                                    value={formData.From}
-                                    onChange={(value) => handleChange('From', value)}
+                                <input
+                                    ref={fromRef}
+                                    placeholder="From"
                                     className="form-field"
-                                    required={true}  // Making this field required
+                                    required
                                 />
                                 <h3>-</h3>
-                                <Info
-                                    title="Destination"
-                                    type="text"
-                                    value={formData.Destination}
-                                    onChange={(value) => handleChange('Destination', value)}
+                                <input
+                                    ref={destinationRef}
+                                    placeholder="Destination"
                                     className="form-field"
-                                    required={true}  // Making this field required
+                                    required
                                 />
                             </div>
                         </div>
