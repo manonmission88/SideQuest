@@ -1,11 +1,11 @@
-// src/components/Header.js
 import React from 'react';
-import './Header.css'; // Import the CSS file
+import './Header.css'; 
+import MapLogo from './sidequest.png';
 
 const Header = () => {
     return (
         <header className="header">
-            <h1>SideQuest</h1>
+            <img src={MapLogo} alt="Logo" className="header-logo" />
         </header>
     );
 };

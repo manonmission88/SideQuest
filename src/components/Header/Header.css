@@ -1,32 +1,24 @@
-/* src/components/Header.css */
-
 /* Header Styles */
 .header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #000;
+    background-color: #208492;
     color: #fff;
-    padding: 5px 15px;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 18px;
     z-index: 1000;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-    margin-bottom: 20px;
-    /* Adjust this value as needed */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Title alignment */
-.title {
-    margin: 0;
-    /* Remove default margin */
-    text-align: left;
-    /* Align text to the left */
-    flex: 1;
-    /* Take up available space */
+/* Logo Styling */
+.header-logo {
+    height: 90px;
+    width: auto;
+    margin-right: 15px;
 }
+
