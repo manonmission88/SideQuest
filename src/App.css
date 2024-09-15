@@ -1,13 +1,21 @@
 /* Global Styles */
+/* Global Styles */
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
-  background-color: lightgreen;
-  background-image: url('background.png');
+  background-image: url('bbackk.png');
   background-size: cover;
+  /* Ensures the image covers the entire background */
   background-position: center;
+  /* Centers the image */
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  /* Prevents the image from repeating */
+  background-attachment: scroll;
+  /* Allows the image to scroll with the content */
+  min-height: 100vh;
+  /* Ensures the body takes up at least the full viewport height */
+  overflow-x: hidden;
+  /* Prevents horizontal scrolling */
 }
 
 /* Ensure content below the header doesn't overlap */

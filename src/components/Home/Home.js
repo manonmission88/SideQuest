@@ -40,12 +40,13 @@ const Home = () => {
 
     return (
         <div className="container">
+            <div className='title'>
+                <h3>SideQuest</h3>
+            </div>
             <div className="form-and-response">
                 {/* Travel Form */}
                 <div className="home-container">
-                    <div className="map-logo-container">
-                        <img src={MapLogo} alt="Map Logo" className="map-logo" />
-                    </div>
+                    <img src={MapLogo} alt="Map Logo" className="map-logo" />
                     <form onSubmit={handleSubmit}>
                         {/* From and Destination in the same box */}
                         <div className="form-row">
